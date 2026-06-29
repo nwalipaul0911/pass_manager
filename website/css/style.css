@@ -95,15 +95,21 @@ code {
 .logo {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  font-size: 1.05rem;
-  letter-spacing: -0.02em;
 }
 
-.logo-icon {
+.logo-mark {
+  font-family: var(--font-mono);
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
   color: var(--accent);
-  font-size: 0.75rem;
+  text-shadow: 0 0 24px var(--accent-glow);
+  transition: text-shadow 0.25s, letter-spacing 0.25s;
+}
+
+.logo:hover .logo-mark {
+  letter-spacing: 0.28em;
+  text-shadow: 0 0 32px rgba(61, 214, 140, 0.35);
 }
 
 .nav-links {
@@ -686,9 +692,9 @@ code {
   text-align: center;
 }
 
-.logo-footer {
-  font-weight: 600;
-  color: var(--accent);
+.logo-footer.logo-mark {
+  font-size: 1.1rem;
+  letter-spacing: 0.25em;
 }
 
 .footer-links {
