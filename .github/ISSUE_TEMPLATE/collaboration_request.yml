@@ -1,0 +1,49 @@
+name: Collaboration request
+description: Propose a contribution or request to collaborate on pass-manager
+title: "[Collaboration] "
+labels:
+  - collaboration
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for your interest in **pass-manager**! Fill out the form below and we'll get back to you.
+
+  - type: input
+    id: contact
+    attributes:
+      label: Name or GitHub handle
+      placeholder: "@yourhandle or your name"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: interest
+    attributes:
+      label: How would you like to contribute?
+      options:
+        - Bug fix
+        - New feature
+        - Documentation
+        - Security review
+        - General collaboration / co-maintainer
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What would you like to work on?
+      description: Describe your idea, skills, or the area you'd like to help with.
+      placeholder: e.g. I'd like to add clipboard support and can help with Python CLI work...
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Acknowledgement
+      options:
+        - label: I understand this is an open conversation and does not grant automatic repository access.
+          required: true

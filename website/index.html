@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="pass-manager — a terminal-based secret manager for passwords, API keys, and more. Encrypted local vault, zero cloud.">
+  <title>pass-manager — Terminal Secret Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav container">
+      <a href="#" class="logo">
+        <span class="logo-icon" aria-hidden="true">&#9608;</span>
+        pass-manager
+      </a>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#install">Install</a></li>
+        <li><a href="#commands">Commands</a></li>
+        <li><a href="#security">Security</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="https://github.com/nwalipaul0911/pass_manager" class="btn btn-sm btn-ghost btn-github" target="_blank" rel="noopener noreferrer">
+          <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.18.82.63-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.51-1.04 2.18-.82 2.18-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+          <span>GitHub</span>
+        </a>
+        <a href="https://github.com/nwalipaul0911/pass_manager/issues/new?template=collaboration_request.yml" class="btn btn-sm btn-ghost nav-contribute" target="_blank" rel="noopener noreferrer">Contribute</a>
+        <a href="#install" class="btn btn-sm btn-primary">Get started</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <p class="eyebrow">Python CLI &middot; Local-first &middot; Encrypted</p>
+          <h1>Your secrets,<br><span class="accent">in the terminal.</span></h1>
+          <p class="hero-lead">
+            A lightweight secret manager for passwords, API keys, and notes.
+            One master password. One encrypted vault. No cloud required.
+          </p>
+          <div class="hero-actions">
+            <a href="#install" class="btn btn-primary">Install now</a>
+            <a href="https://github.com/nwalipaul0911/pass_manager" class="btn btn-ghost btn-github" target="_blank" rel="noopener noreferrer">
+              <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.18.82.63-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.51-1.04 2.18-.82 2.18-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+              View on GitHub
+            </a>
+            <a href="#commands" class="btn btn-ghost">View commands</a>
+          </div>
+          <div class="hero-meta">
+            <span>Python 3.10+</span>
+            <span class="dot" aria-hidden="true"></span>
+            <span>AES-256 Fernet</span>
+            <span class="dot" aria-hidden="true"></span>
+            <span>PBKDF2 600k</span>
+          </div>
+        </div>
+
+        <div class="terminal" aria-label="Terminal demo">
+          <div class="terminal-bar">
+            <span class="terminal-dot red"></span>
+            <span class="terminal-dot yellow"></span>
+            <span class="terminal-dot green"></span>
+            <span class="terminal-title">bash — pass-manager</span>
+          </div>
+          <div class="terminal-body" id="terminal-output">
+            <div class="line"><span class="prompt">$</span> pass-manager init</div>
+            <div class="line dim">Master password: ********</div>
+            <div class="line dim">Confirm master password: ********</div>
+            <div class="line success">Vault created at ~/.local/share/pass_manager/vault.enc</div>
+            <div class="line"><span class="prompt">$</span> pass-manager add github -t password -u myuser</div>
+            <div class="line dim">Master password: ********</div>
+            <div class="line dim">Secret value: ********</div>
+            <div class="line success">Added 'github' (password)</div>
+            <div class="line"><span class="prompt">$</span> pass-manager list</div>
+            <div class="line dim">Master password: ********</div>
+            <div class="line table-header">NAME    TYPE        USERNAME  URL</div>
+            <div class="line table-row">github  password    myuser    https://github.com</div>
+            <div class="line dim">1 secret(s)</div>
+            <div class="line"><span class="prompt">$</span> pass-manager gen -l 24</div>
+            <div class="line highlight">K#m9$xLq2@vN8wR&pT4jHf6!</div>
+            <div class="line cursor-line"><span class="prompt">$</span><span class="cursor" aria-hidden="true"></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="section">
+      <div class="container">
+        <h2 class="section-title">Built for the command line</h2>
+        <p class="section-lead">Everything you need to store and retrieve secrets without leaving your shell.</p>
+        <div class="feature-grid">
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true">&#128274;</div>
+            <h3>Encrypted vault</h3>
+            <p>Secrets live in a single encrypted file. AES-256 via Fernet with a key derived from your master password.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true">&#128273;</div>
+            <h3>Multiple secret types</h3>
+            <p>Store passwords, API keys, notes, and more. Attach usernames, URLs, tags, and free-form notes.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true">&#128269;</div>
+            <h3>Search &amp; filter</h3>
+            <p>Find secrets by name, username, URL, notes, or tags. Filter the list by secret type.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true">&#9889;</div>
+            <h3>Script-friendly</h3>
+            <p>The <code>get</code> command prints a field to stdout — pipe secrets into scripts and automation.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true">&#127744;</div>
+            <h3>Password generator</h3>
+            <p>Generate cryptographically secure passwords with configurable length and character sets.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true">&#128421;</div>
+            <h3>SSH-ready</h3>
+            <p>Install on a remote server, SSH in, and use it interactively. Secrets stay where you need them.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="install" class="section section-alt">
+      <div class="container">
+        <h2 class="section-title">Installation</h2>
+        <p class="section-lead">Clone, install, and create your vault in under a minute.</p>
+
+        <div class="install-steps">
+          <div class="step">
+            <span class="step-num">1</span>
+            <div class="step-content">
+              <h3>Clone &amp; install</h3>
+              <div class="code-block">
+                <pre><code id="install-code">git clone https://github.com/nwalipaul0911/pass_manager.git
+cd pass_manager
+python3 -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -e .</code></pre>
+                <button class="copy-btn" data-copy="install-code" aria-label="Copy install commands">Copy</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="step">
+            <span class="step-num">2</span>
+            <div class="step-content">
+              <h3>Initialize your vault</h3>
+              <div class="code-block">
+                <pre><code id="init-code">pass-manager init</code></pre>
+                <button class="copy-btn" data-copy="init-code" aria-label="Copy init command">Copy</button>
+              </div>
+              <p class="step-note">You'll be prompted to set a master password. There is no recovery — back it up.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <span class="step-num">3</span>
+            <div class="step-content">
+              <h3>Start adding secrets</h3>
+              <div class="code-block">
+                <pre><code id="quickstart-code">pass-manager add github -t password -u myuser --url https://github.com
+pass-manager add openai -t api_key --notes "Production key"
+pass-manager list
+pass-manager show github --reveal</code></pre>
+                <button class="copy-btn" data-copy="quickstart-code" aria-label="Copy quick start commands">Copy</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="vault-info">
+          <h3>Vault location</h3>
+          <p>By default, your encrypted vault is stored at:</p>
+          <div class="code-block inline">
+            <pre><code>~/.local/share/pass_manager/vault.enc</code></pre>
+          </div>
+          <p>Override with <code>PASS_MANAGER_VAULT</code> or the <code>--vault</code> flag.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="commands" class="section">
+      <div class="container">
+        <h2 class="section-title">Command reference</h2>
+        <p class="section-lead">Most commands prompt for your master password. <code>init</code>, <code>gen</code>, and <code>status</code> do not.</p>
+
+        <div class="table-wrap">
+          <table class="cmd-table">
+            <thead>
+              <tr>
+                <th>Command</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><code>init</code></td><td>Create a new encrypted vault</td></tr>
+              <tr><td><code>add &lt;name&gt;</code></td><td>Add a secret</td></tr>
+              <tr><td><code>list</code> / <code>ls</code></td><td>List all secrets</td></tr>
+              <tr><td><code>show &lt;name&gt;</code></td><td>Show details (masked by default; use <code>--reveal</code>)</td></tr>
+              <tr><td><code>get &lt;name&gt;</code></td><td>Print a field to stdout for scripts</td></tr>
+              <tr><td><code>update &lt;name&gt;</code></td><td>Update an existing secret</td></tr>
+              <tr><td><code>delete &lt;name&gt;</code> / <code>rm</code></td><td>Delete a secret</td></tr>
+              <tr><td><code>search &lt;query&gt;</code></td><td>Search by name, username, URL, notes, or tags</td></tr>
+              <tr><td><code>gen</code></td><td>Generate a secure random password</td></tr>
+              <tr><td><code>status</code></td><td>Show vault path and whether it exists</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="cmd-examples">
+          <h3>Examples</h3>
+          <div class="example-grid">
+            <div class="code-block">
+              <span class="code-label">Store an API key</span>
+              <pre><code>pass-manager add github-token -t api_key \
+  --url https://github.com --tags dev,git</code></pre>
+            </div>
+            <div class="code-block">
+              <span class="code-label">Generate &amp; store a password</span>
+              <pre><code>pass-manager add email -t password \
+  -s "$(pass-manager gen -l 32)"</code></pre>
+            </div>
+            <div class="code-block">
+              <span class="code-label">Use in a script</span>
+              <pre><code>TOKEN=$(pass-manager get openai -f secret)
+curl -H "Authorization: Bearer $TOKEN" ...</code></pre>
+            </div>
+            <div class="code-block">
+              <span class="code-label">Filter by type</span>
+              <pre><code>pass-manager list -t api_key
+pass-manager search github.com</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="security" class="section section-alt">
+      <div class="container">
+        <h2 class="section-title">Security model</h2>
+        <p class="section-lead">Local-first by design. Your secrets never leave your machine unless you put them there.</p>
+
+        <div class="security-grid">
+          <div class="security-item">
+            <h3>Master password</h3>
+            <p>Never written to disk. Used only to derive the encryption key at unlock time via PBKDF2-HMAC-SHA256 with 600,000 iterations.</p>
+          </div>
+          <div class="security-item">
+            <h3>Unique salt</h3>
+            <p>Each vault file contains a random 16-byte salt. The same master password on different vaults produces different keys.</p>
+          </div>
+          <div class="security-item">
+            <h3>Restricted permissions</h3>
+            <p>The vault file is created with mode <code>0600</code> where the operating system supports it.</p>
+          </div>
+          <div class="security-item">
+            <h3>Masked by default</h3>
+            <p><code>show</code> partially masks secret values. Use <code>--reveal</code> only when you need the full value.</p>
+          </div>
+          <div class="security-item">
+            <h3>No recovery</h3>
+            <p>Wrong master password fails decryption. There is no hint, reset, or backdoor. Back up your master password.</p>
+          </div>
+          <div class="security-item">
+            <h3>Shell history</h3>
+            <p>Avoid passing secrets with <code>-s</code> on shared systems. Prefer the interactive prompt instead.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section cta-section">
+      <div class="container cta-box">
+        <h2>Ready to lock down your secrets?</h2>
+        <p>Install pass-manager and take control of your passwords and API keys from the terminal.</p>
+        <div class="cta-actions">
+          <a href="#install" class="btn btn-primary btn-lg">Get started</a>
+          <a href="https://github.com/nwalipaul0911/pass_manager" class="btn btn-ghost btn-lg btn-github" target="_blank" rel="noopener noreferrer">
+            <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.18.82.63-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.51-1.04 2.18-.82 2.18-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+            View on GitHub
+          </a>
+          <a href="https://github.com/nwalipaul0911/pass_manager/issues/new?template=collaboration_request.yml" class="btn btn-ghost btn-lg" target="_blank" rel="noopener noreferrer">Request collaboration</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span class="logo-footer">pass-manager</span>
+      <nav class="footer-links" aria-label="Project links">
+        <a href="https://github.com/nwalipaul0911/pass_manager" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://github.com/nwalipaul0911/pass_manager/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">Contributing</a>
+        <a href="https://github.com/nwalipaul0911/pass_manager/issues/new?template=collaboration_request.yml" target="_blank" rel="noopener noreferrer">Collaborate</a>
+      </nav>
+      <p>Terminal secret manager &middot; Python 3.10+ &middot; MIT</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
