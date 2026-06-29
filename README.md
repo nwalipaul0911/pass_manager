@@ -2,6 +2,13 @@
 
 A terminal-based secret manager for passwords, API keys, and other sensitive values. Secrets are stored in an encrypted vault file protected by a single master password.
 
+**[View the static website →](website/index.html)** — open `website/index.html` in a browser, or serve locally:
+
+```bash
+cd website && python3 -m http.server 8080
+# then visit http://localhost:8080
+```
+
 ## Features
 
 - Encrypted local vault (AES-256 via Fernet)
@@ -22,7 +29,7 @@ A terminal-based secret manager for passwords, API keys, and other sensitive val
 Clone the repository and install in editable mode:
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/nwalipaul0911/pass_manager.git
 cd pass_manager
 python3 -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
