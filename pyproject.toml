@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pass-manager"
+version = "0.1.0"
+description = "Terminal-based secret manager for passwords, API keys, and more"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "cryptography>=42.0.0",
+]
+
+[project.scripts]
+pass-manager = "pass_manager.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
