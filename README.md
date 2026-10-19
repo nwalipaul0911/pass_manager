@@ -31,9 +31,25 @@ Clone the repository and install in editable mode:
 ```bash
 git clone https://github.com/nwalipaul0911/pass_manager.git
 cd pass_manager
+```
+
+```bash
 python3 -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -e .
+```
+
+Or use [uv](https://docs.astral.sh/uv/getting-started/installation/) to create the virtual environment and install the project and its dependencies:
+
+```bash
+uv sync
+uv run pass-manager --help
+```
+
+`uv sync` creates a `.venv` in the project directory and installs the project. Use `uv run pass-manager ...` to run commands without activating the environment, for example:
+
+```bash
+uv run pass-manager init
 ```
 
 Or install dependencies only:
@@ -43,9 +59,11 @@ pip install -r requirements.txt
 python -m pass_manager --help
 ```
 
-After installation, the `pass-manager` command is available on your PATH.
+After a pip installation, the `pass-manager` command is available on your PATH while the virtual environment is activated. With uv, use `uv run pass-manager ...` or activate `.venv` first.
 
 ## Quick start
+
+After installing with pip, run `pass-manager` directly. If you installed with uv, prefix commands with `uv run` (for example, `uv run pass-manager list`).
 
 ```bash
 # Create a new vault (prompts for master password)
