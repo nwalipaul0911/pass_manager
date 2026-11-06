@@ -1,3 +1,5 @@
+"""Command-line interface for creating and managing encrypted vaults."""
+
 from __future__ import annotations
 
 import argparse
@@ -10,6 +12,19 @@ from pass_manager.vault import Vault, VaultError, generate_password
 
 
 def _prompt_password(prompt: str = "Master password: ", confirm: bool = False) -> str:
+    """Prompt for a master password without echoing input to the terminal.
+
+    Args:
+        prompt: Text shown before the password prompt.
+        confirm: If true, prompt for the password a second time and require an
+            exact match.
+
+    Returns:
+        The entered, non-empty password.
+
+    Raises:
+        SystemExit: If the password is empty or confirmation does not match.
+    """
     password = getpass.getpass(prompt)
     if confirm:
         again = getpass.getpass("Confirm master password: ")
@@ -23,6 +38,17 @@ def _prompt_password(prompt: str = "Master password: ", confirm: bool = False) -
 
 
 def _prompt_secret(prompt: str = "Secret value: ") -> str:
+    """Prompt for a non-empty secret without echoing it to the terminal.
+
+    Args:
+        prompt: Text shown before the secret prompt.
+
+    Returns:
+        The entered secret value.
+
+    Raises:
+        SystemExit: If the entered value is empty.
+    """
     value = getpass.getpass(prompt)
     if not value:
         print("Secret value cannot be empty.", file=sys.stderr)
@@ -31,12 +57,36 @@ def _prompt_secret(prompt: str = "Secret value: ") -> str:
 
 
 def _mask(value: str, visible: int = 4) -> str:
+    """Mask a string while optionally leaving its trailing characters visible.
+
+    Args:
+        value: Secret text to mask.
+        visible: Number of trailing characters to leave visible when the value
+            is longer than this number.
+
+    Returns:
+        A string of asterisks, followed by the visible suffix when applicable.
+        Values no longer than ``visible`` are masked completely.
+    """
     if len(value) <= visible:
         return "*" * len(value)
     return "*" * (len(value) - visible) + value[-visible:]
 
 
 def _with_vault(args: argparse.Namespace, fn) -> int:
+    """Unlock the selected vault and call a command-specific function.
+
+    Args:
+        args: Parsed CLI arguments; ``args.vault`` selects an optional vault
+            path, with the default path used when it is falsey.
+        fn: Callback accepting the unlocked :class:`Vault` and master password,
+            and returning an integer command status.
+
+    Returns:
+        The callback's status code, or ``1`` if the vault is missing, cannot
+        be unlocked, or raises a handled vault or value error. Errors are
+        printed to standard error.
+    """
     vault = Vault(Path(args.vault) if args.vault else None)
     try:
         if not vault.exists:
@@ -57,6 +107,17 @@ def _with_vault(args: argparse.Namespace, fn) -> int:
 
 
 def cmd_init(args: argparse.Namespace) -> int:
+    """Create a new encrypted vault at the selected path.
+
+    Args:
+        args: Parsed CLI arguments. ``args.vault`` is an optional path and
+            ``args.force`` allows an existing vault file to be overwritten.
+
+    Returns:
+        ``0`` after creating the vault, or ``1`` if it already exists and
+        ``--force`` was not supplied. Prompts for and confirms the master
+        password, then prints the created path.
+    """
     vault = Vault(Path(args.vault) if args.vault else None)
     if vault.exists and not args.force:
         print(
@@ -73,7 +134,27 @@ def cmd_init(args: argparse.Namespace) -> int:
 
 
 def cmd_add(args: argparse.Namespace) -> int:
+    """Add a new secret entry to the selected vault.
+
+    Args:
+        args: Parsed CLI arguments containing the vault path, entry name,
+            type, optional secret, username, URL, notes, and comma-separated
+            tags. If no secret is supplied, the user is prompted for it.
+
+    Returns:
+        ``0`` if the entry is saved; otherwise, the status returned by
+        :func:`_with_vault`. Prints a confirmation after saving.
+    """
     def run(vault: Vault, master: str) -> int:
+        """Create and save an entry using the parsed add-command options.
+
+        Args:
+            vault: The already-unlocked vault to modify.
+            master: Master password used to encrypt the saved vault.
+
+        Returns:
+            ``0`` after saving the entry and printing its name and type.
+        """
         secret = args.secret or _prompt_secret()
         entry = SecretEntry(
             name=args.name,
@@ -92,7 +173,27 @@ def cmd_add(args: argparse.Namespace) -> int:
 
 
 def cmd_list(args: argparse.Namespace) -> int:
+    """List vault entries, optionally filtered by type and search text.
+
+    Args:
+        args: Parsed CLI arguments containing the optional vault path, entry
+            type filter, and text query.
+
+    Returns:
+        ``0`` after printing either the matching entries or a no-results
+        message; otherwise, the status returned by :func:`_with_vault`.
+        Secret values are not included in the output.
+    """
     def run(vault: Vault, _master: str) -> int:
+        """Print the matching entry metadata as a table.
+
+        Args:
+            vault: The already-unlocked vault to query.
+            _master: Master password supplied by :func:`_with_vault`; unused.
+
+        Returns:
+            ``0`` after printing the table or a no-results message.
+        """
         entries = vault.list_entries(secret_type=args.type, query=args.query)
         if not entries:
             print("No secrets found.")
@@ -111,7 +212,26 @@ def cmd_list(args: argparse.Namespace) -> int:
 
 
 def cmd_show(args: argparse.Namespace) -> int:
+    """Display one entry's details and optionally reveal its secret.
+
+    Args:
+        args: Parsed CLI arguments containing the vault path, entry name, and
+            ``reveal`` flag.
+
+    Returns:
+        ``0`` after printing the entry, or the status returned by
+        :func:`_with_vault`. The secret is masked unless ``--reveal`` is set.
+    """
     def run(vault: Vault, _master: str) -> int:
+        """Print one entry's available metadata and secret representation.
+
+        Args:
+            vault: The already-unlocked vault to query.
+            _master: Master password supplied by :func:`_with_vault`; unused.
+
+        Returns:
+            ``0`` after printing the entry details.
+        """
         entry = vault.get(args.name)
         print(f"Name:     {entry.name}")
         print(f"Type:     {entry.secret_type}")
@@ -136,7 +256,27 @@ def cmd_show(args: argparse.Namespace) -> int:
 
 
 def cmd_get(args: argparse.Namespace) -> int:
+    """Print a single entry field to standard output.
+
+    Args:
+        args: Parsed CLI arguments containing the vault path, entry name, and
+            selected field (``secret``, ``username``, or ``url``).
+
+    Returns:
+        ``0`` after printing the field, or the status returned by
+        :func:`_with_vault`. This command is intended for shell pipelines.
+    """
     def run(vault: Vault, _master: str) -> int:
+        """Look up an entry and print its requested field.
+
+        Args:
+            vault: The already-unlocked vault to query.
+            _master: Master password supplied by :func:`_with_vault`; unused.
+
+        Returns:
+            ``0`` after writing the selected value and a newline to standard
+            output.
+        """
         entry = vault.get(args.name)
         if args.field == "secret":
             print(entry.secret)
@@ -152,7 +292,29 @@ def cmd_get(args: argparse.Namespace) -> int:
 
 
 def cmd_update(args: argparse.Namespace) -> int:
+    """Update the provided fields of an existing vault entry.
+
+    Args:
+        args: Parsed CLI arguments containing the vault path, current entry
+            name, and optional replacement values for the entry's fields.
+            An explicitly requested but empty secret triggers a hidden prompt.
+
+    Returns:
+        ``0`` after saving the update, ``1`` if no fields were supplied, or
+        the status returned by :func:`_with_vault`. Prints a confirmation on
+        success.
+    """
     def run(vault: Vault, master: str) -> int:
+        """Collect supplied replacement values and save them to the vault.
+
+        Args:
+            vault: The already-unlocked vault to modify.
+            master: Master password used to encrypt the saved vault.
+
+        Returns:
+            ``0`` after a successful update, or ``1`` if no update fields
+            were specified.
+        """
         fields: dict = {}
         if args.name_new:
             fields["name"] = args.name_new
@@ -179,7 +341,27 @@ def cmd_update(args: argparse.Namespace) -> int:
 
 
 def cmd_delete(args: argparse.Namespace) -> int:
+    """Delete an entry, asking for confirmation unless ``--yes`` is set.
+
+    Args:
+        args: Parsed CLI arguments containing the vault path, entry name, and
+            confirmation-skip flag.
+
+    Returns:
+        ``0`` after deletion or cancellation, or the status returned by
+        :func:`_with_vault`. Prints whether the deletion completed or was
+        cancelled.
+    """
     def run(vault: Vault, master: str) -> int:
+        """Confirm and delete the named entry from the unlocked vault.
+
+        Args:
+            vault: The already-unlocked vault to modify.
+            master: Master password used to encrypt the saved vault.
+
+        Returns:
+            ``0`` after deletion or if the user declines confirmation.
+        """
         if not args.yes:
             confirm = input(f"Delete '{args.name}'? [y/N] ").strip().lower()
             if confirm not in ("y", "yes"):
@@ -193,11 +375,31 @@ def cmd_delete(args: argparse.Namespace) -> int:
 
 
 def cmd_search(args: argparse.Namespace) -> int:
+    """Search vault entries by passing the query to :func:`cmd_list`.
+
+    Args:
+        args: Parsed CLI arguments containing the vault path, required search
+            query, and optional type filter.
+
+    Returns:
+        The status returned by :func:`cmd_list`, which prints matching entries
+        without revealing their secret values.
+    """
     args.query = args.query
     return cmd_list(args)
 
 
 def cmd_gen(args: argparse.Namespace) -> int:
+    """Generate a password and print it to standard output.
+
+    Args:
+        args: Parsed CLI arguments containing the requested length and flags
+            controlling symbols and ambiguous characters.
+
+    Returns:
+        ``0`` after printing the generated password, or ``1`` if the requested
+        length is invalid. Generation errors are printed to standard error.
+    """
     try:
         password = generate_password(
             length=args.length,
@@ -212,6 +414,16 @@ def cmd_gen(args: argparse.Namespace) -> int:
 
 
 def cmd_status(args: argparse.Namespace) -> int:
+    """Print the selected vault path and its basic file status.
+
+    Args:
+        args: Parsed CLI arguments; ``args.vault`` may specify a non-default
+            vault path.
+
+    Returns:
+        ``0`` after printing the path and existence status, plus file size if
+        the vault exists.
+    """
     vault = Vault(Path(args.vault) if args.vault else None)
     print(f"Vault path: {vault.path}")
     print(f"Exists:     {'yes' if vault.exists else 'no'}")
@@ -222,6 +434,15 @@ def cmd_status(args: argparse.Namespace) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
+    """Create the argument parser and register the supported subcommands.
+
+    Returns:
+        An :class:`argparse.ArgumentParser` configured with global vault-path
+        handling and the ``init``, ``add``, ``list``, ``show``, ``get``,
+        ``update``, ``delete``, ``search``, ``gen``, and ``status`` commands.
+        Each subcommand stores its handler in the parsed namespace's ``func``
+        attribute.
+    """
     parser = argparse.ArgumentParser(
         prog="pass-manager",
         description="Terminal secret manager for passwords, API keys, and more.",
@@ -317,6 +538,16 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Parse CLI arguments and dispatch to the selected command handler.
+
+    Args:
+        argv: Optional argument strings to parse instead of ``sys.argv``.
+            Useful when invoking the CLI programmatically or in tests.
+
+    Returns:
+        The integer status code returned by the selected command handler.
+        The parser prints usage and exits for invalid arguments.
+    """
     parser = build_parser()
     args = parser.parse_args(argv)
     return args.func(args)
